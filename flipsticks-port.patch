@@ -20,6 +20,49 @@ index 40a91c3..2d31088 100644
          toolbar_box.toolbar.insert(activity_button, 0)
          activity_button.show()
  
+diff --git a/model.py b/model.py
+index 478a224..a937798 100644
+--- a/model.py
++++ b/model.py
+@@ -14,7 +14,7 @@
+ 
+ import os
+ import math
+-from sugar3.datastore import datastore
++from sugarapp.widgets import DesktopSaveChooser
+ 
+ try:
+     import json
+@@ -208,20 +208,15 @@ def getparentjoint(jname, joints, middle):
+ 
+ 
+ def screen_shot(pixbuf):
+-    tmpdir = '/tmp'
+-
+-    filename = 'fp%03d.png' % i
+-    filepath = os.path.join(tmpdir, filename)
+-    pixbuf.savev(filepath, 'png', (), ())
+-
+-    mediaObject = datastore.create()
+-    mediaObject.metadata['title'] = 'FlipSticks PNG'
+-    thumbData = _get_base64_pixbuf_data(pixbuf)
+-    mediaObject.metadata['preview'] = thumbData
+-    # medaiObject.metadata['icon-color'] = ''
+-    mediaObject.metadata['mime_type'] = 'image/png'
+-    mediaObject.file_path = filepath
+-    datastore.write(mediaObject)
++    # Open a file chooser dialog for the user to select the filename
++    chooser = DesktopSaveChooser(None, filename='screenshot.png')
++    filename = chooser.get_filename()
++    
++    # If the user cancels the dialog, exit the function
++    if not filename:
++        return
++
++    pixbuf.savev(filename, 'png', (), ())
+ 
+ 
+ def _get_base64_pixbuf_data(pixbuf):
 diff --git a/toolkit/activity.py b/toolkit/activity.py
 index 20cadfe..6f95957 100644
 --- a/toolkit/activity.py
